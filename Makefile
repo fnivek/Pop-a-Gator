@@ -32,7 +32,7 @@ GDB = arm-none-eabi-gdb
 OBJCOPY = arm-none-eabi-objcopy
 OBJDUMP = arm-none-eabi-objdump
 SIZE = arm-none-eabi-size
-REMOVE  = rm -rvf
+REMOVE  = rm
 
 
 ############################################################
@@ -58,6 +58,16 @@ LD_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
 
 
 ############################################################
+# Verbosity
+############################################################
+ifeq ($V, 1)
+	VERBOSE =
+else
+	VERBOSE = @
+endif
+
+
+############################################################
 # Targets: Actions
 ############################################################
 .SUFFIXES: .c .eep .h .hex .o .elf .s .S
@@ -66,30 +76,21 @@ LD_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
 all: $(BUILD_DIR)/$(PROJECT).elf
 
 clean:
-	@echo
-	@echo "\033[01;32mCLEAN\033[00m *.o *.s *.out *.hex *.eep\033[01;37m"
-	@echo "find . \( -type f -name '*.o' -o -name '*.s' -o -name '*.out' -o -name '*.hex' \) -exec $(REMOVE) {} \;\033[01;35m"
-	@find . \( -type f -name '*.o' -o -name '*.s' -o -name '*.out' -o -name '*.hex' \) -exec $(REMOVE) {} \;
+	$(VERBOSE) find . \( -type f -name '*.o' -o -name '*.s' -o -name '*.out' -o -name '*.hex' \) -exec $(REMOVE) {} \;
 
 
 ############################################################
 # Targets: Output
 ############################################################
 $(BUILD_DIR)/$(PROJECT).elf: $(OBJECTS)
-	@echo
-	@echo "\033[01;32mLD\033[00m $@\033[01;37m"
-	@echo "$(LD) -o $@ $(OBJECTS) $(LD_FLAGS)\033[01;35m"
-	@$(LD) -o $@ $(OBJECTS) $(LD_FLAGS)
+	@echo ld $<
+	$(VERBOSE) $(LD) -o $@ $(OBJECTS) $(LD_FLAGS)
 
 %.o: %.c
-	@echo
-	@echo "\033[01;32mCC\033[00m $<\033[01;37m"
-	@echo "$(CC) $(GCC_FLAGS) -c $< -o $@\033[01;35m"
-	@$(CC) $(GCC_FLAGS) -c $< -o $@
+	@echo cc $<
+	$(VERBOSE) $(CC) $(GCC_FLAGS) -c $< -o $@
 	
 
 %.o: %.S
-	@echo
-	@echo "\033[01;32mAS\033[00m $<\033[01;37m"
-	@echo "$(CC) $(AS_FLAGS) -c $< -o $@\033[01;35m"
-	@$(CC) $(AS_FLAGS) -c $< -o $@
+	@echo cc $<
+	$(VERBOSE) $(CC) $(AS_FLAGS) -c $< -o $@
