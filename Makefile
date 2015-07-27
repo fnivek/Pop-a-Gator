@@ -53,7 +53,7 @@ OBJECTS = $(GCC_SOURCES:.c=.o) $(AS_SOURCES:.S=.o)
 GCC_FLAGS  = -g -std=$(STANDARD) -mcpu=$(TARGET) -march=armv7e-m -mthumb -O$(OPTIMIZATION) -mfpu=fpv4-sp-d16 -mfloat-abi=hard -lstm32f3 -Tstm32f3.ld -ffunction-sections -fdata-sections -Wall -Wstrict-prototypes
 GCC_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
 
-LD_FLAGS  = -mcpu=$(TARGET) -march=armv7e-m -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard  --specs=nosys.specs -Lld -Tstm32_flash.ld
+LD_FLAGS  = -mcpu=$(TARGET) -march=armv7e-m -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard  --specs=nosys.specs -Lld
 LD_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
 
 
@@ -73,7 +73,11 @@ endif
 .SUFFIXES: .c .eep .h .hex .o .elf .s .S
 .PHONY: all disasm hex upload clean
 
-all: $(BUILD_DIR)/$(PROJECT).elf
+all: flash ram
+
+flash: $(BUILD_DIR)/$(PROJECT)_flash.elf
+
+ram: $(BUILD_DIR)/$(PROJECT)_ram.elf
 
 clean:
 	$(VERBOSE) find . \( -type f -name '*.o' -o -name '*.s' -o -name '*.out' -o -name '*.hex' \) -exec $(REMOVE) {} \;
@@ -82,9 +86,13 @@ clean:
 ############################################################
 # Targets: Output
 ############################################################
-$(BUILD_DIR)/$(PROJECT).elf: $(OBJECTS)
-	@echo ld $<
-	$(VERBOSE) $(LD) -o $@ $(OBJECTS) $(LD_FLAGS)
+$(BUILD_DIR)/$(PROJECT)_flash.elf: $(OBJECTS)
+	@echo ld $@
+	$(VERBOSE) $(LD) -o $@ $(OBJECTS) $(LD_FLAGS) -Tstm32f4_flash.ld
+
+$(BUILD_DIR)/$(PROJECT)_ram.elf: $(OBJECTS)
+	@echo ld $@
+	$(VERBOSE) $(LD) -o $@ $(OBJECTS) $(LD_FLAGS) -Tstm32f4_ram.ld
 
 %.o: %.c
 	@echo cc $<
