@@ -149,7 +149,6 @@ SECTIONS
   /DISCARD/ :
   {
     libc.a ( * )
-    libstdc++.a ( * )
     libm.a ( * )
     libgcc.a ( * )
   }
