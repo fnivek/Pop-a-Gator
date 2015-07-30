@@ -2,7 +2,6 @@
 # Project
 ############################################################
 PROJECT = F4
-TARGET  = cortex-m4
 
 
 ############################################################
@@ -10,16 +9,25 @@ TARGET  = cortex-m4
 ############################################################
 OPTIMIZATION = s
 STANDARD     = c11
+ARCH         = -DSTM32F3 -march=armv7e-m -mthumb -mcpu=cortex-m4
+FP           = -mfloat-abi=hard -mfpu=fpv4-sp-d16
+
+
+############################################################
+# Linker Options
+############################################################
+LDSCRIPT     = stm32f3-discovery.ld
 
 
 ############################################################
 # Directories
 ############################################################
 BUILD_DIR     = ./build
-DRIVERS_DIR   = ./drivers
-INCLUDE_DIR   = ./include ./drivers/cmsis/include ./drivers/stm32f4xx/include ./drivers/stm32f4xx_hal/include
-LIBRARIES_DIR = ./lib
+OPENCM3_DIR   = ./libopencm3
+INCLUDE_DIR   = ./include ./libopencm3/include
+LIBRARIES_DIR = ./lib 
 SOURCE_DIR    = ./src
+LDSCRIPT_DIR  = ./ld
 
 
 ############################################################
@@ -32,73 +40,69 @@ GDB = arm-none-eabi-gdb
 OBJCOPY = arm-none-eabi-objcopy
 OBJDUMP = arm-none-eabi-objdump
 SIZE = arm-none-eabi-size
-REMOVE  = rm
+REMOVE  = rm -rfv
+STFLASH = st-flash
 
 
 ############################################################
 # Source Files
 ############################################################
-GCC_SOURCES  = $(shell find $(DRIVERS_DIR) -type f -name '*.c')
-GCC_SOURCES += $(shell find $(SOURCE_DIR) -type f -name '*.c')
-
-AS_SOURCES   = $(shell find $(DRIVERS_DIR) -type f -name '*.S')
-AS_SOURCES  += $(shell find $(SOURCE_DIR) -type f -name '*.S')
-
-OBJECTS = $(GCC_SOURCES:.c=.o) $(AS_SOURCES:.S=.o)
+C_FILES = $(shell find $(SOURCE_DIR) -type f -name '*.c')
+S_FILES = $(shell find $(SOURCE_DIR) -type f -name '*.S')
+O_FILES = $(C_FILES:.c=.o) $(S_FILES:.S=.o)
 
 
 ############################################################
 # Tool Flags
 ############################################################
-GCC_FLAGS  = -g -std=$(STANDARD) -mcpu=$(TARGET) -march=armv7e-m -mthumb -O$(OPTIMIZATION) -mfpu=fpv4-sp-d16 -mfloat-abi=hard -lstm32f3 -Tstm32f3.ld -ffunction-sections -fdata-sections -Wall -Wstrict-prototypes
-GCC_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
+CC_FLAGS  = -g -Os
+CC_FLAGS += -std=$(STANDARD) $(ARCH) $(FP)
+CC_FLAGS += -ffunction-sections -fdata-sections -Wall -Wstrict-prototypes
+CC_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
 
-LD_FLAGS  = -mcpu=$(TARGET) -march=armv7e-m -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard  --specs=nosys.specs -Lld
-LD_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
-
-
-############################################################
-# Verbosity
-############################################################
-ifeq ($V, 1)
-	VERBOSE =
-else
-	VERBOSE = @
-endif
+LD_FLAGS  = $(ARCH) $(FP)
+LD_FLAGS += -L$(OPENCM3_DIR)/lib -L$(LDSCRIPT_DIR) -T$(LDSCRIPT) -lopencm3_stm32f3
+LD_FLAGS += --static -nostartfiles
+LD_FLAGS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 
 
 ############################################################
 # Targets: Actions
 ############################################################
 .SUFFIXES: .c .eep .h .hex .o .elf .s .S
-.PHONY: all disasm hex upload clean
+.PHONY: all bin elf flash clean
 
-all: flash ram
+all: elf
 
-flash: $(BUILD_DIR)/$(PROJECT)_flash.elf
+elf: $(BUILD_DIR)/$(PROJECT).elf
 
-ram: $(BUILD_DIR)/$(PROJECT)_ram.elf
+bin: $(BUILD_DIR)/$(PROJECT).bin
+
+flash: $(BUILD_DIR)/$(PROJECT).bin
+	$(STFLASH) write $< 0x08000000
+
+erase:
+	$(STFLASH) erase
 
 clean:
-	$(VERBOSE) find . \( -type f -name '*.o' -o -name '*.s' -o -name '*.out' -o -name '*.hex' -o -name '*.elf' \) -exec $(REMOVE) {} \;
+	$(REMOVE) src/*.o src/**/*.o build/*.elf build/*.hex build/*.bin
 
 
 ############################################################
 # Targets: Output
 ############################################################
-$(BUILD_DIR)/$(PROJECT)_flash.elf: $(OBJECTS)
-	@echo ld $@
-	$(VERBOSE) $(LD) -o $@ $(OBJECTS) $(LD_FLAGS) -Tstm32f4_flash.ld
+$(BUILD_DIR)/$(PROJECT).elf: libopencm3 $(O_FILES)
+	$(LD) -o $@ $(O_FILES) $(LD_FLAGS)
 
-$(BUILD_DIR)/$(PROJECT)_ram.elf: $(OBJECTS)
-	@echo ld $@
-	$(VERBOSE) $(LD) -o $@ $(OBJECTS) $(LD_FLAGS) -Tstm32f4_ram.ld
+$(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT).elf
+	$(OBJCOPY) -Obinary $< $@
 
 %.o: %.c
-	@echo cc $<
-	$(VERBOSE) $(CC) $(GCC_FLAGS) -c $< -o $@
-	
+	$(CC) $(CC_FLAGS) -c $< -o $@
 
 %.o: %.S
-	@echo cc $<
-	$(VERBOSE) $(CC) $(AS_FLAGS) -c $< -o $@
+	$(CC) $(AS_FLAGS) -c $< -o $@
+
+libopencm3:
+	git submodule update
+	make -C libopencm3
