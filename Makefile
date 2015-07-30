@@ -80,7 +80,7 @@ flash: $(BUILD_DIR)/$(PROJECT)_flash.elf
 ram: $(BUILD_DIR)/$(PROJECT)_ram.elf
 
 clean:
-	$(VERBOSE) find . \( -type f -name '*.o' -o -name '*.s' -o -name '*.out' -o -name '*.hex' \) -exec $(REMOVE) {} \;
+	$(VERBOSE) find . \( -type f -name '*.o' -o -name '*.s' -o -name '*.out' -o -name '*.hex' -o -name '*.elf' \) -exec $(REMOVE) {} \;
 
 
 ############################################################
