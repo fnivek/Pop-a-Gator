@@ -9,14 +9,14 @@ PROJECT = F4
 ############################################################
 OPTIMIZATION = s
 STANDARD     = c11
-ARCH         = -DSTM32F3 -march=armv7e-m -mthumb -mcpu=cortex-m4
+ARCH         = -DSTM32F4 -march=armv7e-m -mthumb -mcpu=cortex-m4
 FP           = -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
 
 ############################################################
 # Linker Options
 ############################################################
-LDSCRIPT     = stm32f3-discovery.ld
+LDSCRIPT     = stm32f4-discovery.ld
 
 
 ############################################################
@@ -61,7 +61,7 @@ CC_FLAGS += -ffunction-sections -fdata-sections -Wall -Wstrict-prototypes
 CC_FLAGS += $(patsubst %,-I%,$(INCLUDE_DIR)) -I.
 
 LD_FLAGS  = $(ARCH) $(FP)
-LD_FLAGS += -L$(OPENCM3_DIR)/lib -L$(LDSCRIPT_DIR) -T$(LDSCRIPT) -lopencm3_stm32f3
+LD_FLAGS += -L$(OPENCM3_DIR)/lib -L$(LDSCRIPT_DIR) -T$(LDSCRIPT) -lopencm3_stm32f4
 LD_FLAGS += --static -nostartfiles
 LD_FLAGS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 
