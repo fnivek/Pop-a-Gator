@@ -1,0 +1,14 @@
+addons:
+  apt_packages:
+    - lib32bz2-1.0
+    - lib32ncurses5
+    - lib32z1
+
+install:
+  - wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q2-update/+download/gcc-arm-none-eabi-4_9-2015q2-20150609-linux.tar.bz2
+  - tar xvf gcc-arm-none-eabi-4_9-2015q2-20150609-linux.tar.bz2
+  - export PATH=$PATH:$PWD/gcc-arm-none-eabi-4_9-2015q2/bin
+
+script:
+  - make -C libopencm3
+  - make
