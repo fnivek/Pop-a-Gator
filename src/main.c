@@ -1,78 +1,59 @@
 /*
- * This file is part of the libopencm3 project.
- *
- * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>,
- * Copyright (C) 2010 Piotr Esden-Tempski <piotr@esden.net>
- * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
- *
- * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * This is the main file for the nordic interface
  */
 
 #include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/spi.h>
 #include <libopencm3/stm32/gpio.h>
 
-uint16_t exti_line_state;
+/*
+ * 	Pin map
+ *		B3 - SPI3_SCK
+ * 		B4 - SPI3_MISO
+ * 		B5 - SPI3_MOSI
+ */
 
-/* Set STM32 to 168 MHz. */
-static void clock_setup(void)
-{
-	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
-}
-
-static void gpio_setup(void)
-{
-	/* Enable GPIOD clock. */
-	rcc_periph_clock_enable(RCC_GPIOD);
-
-	/* Set GPIO12 (in GPIO port D) to 'output push-pull'. */
-	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
-			GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
-}
-
-static void button_setup(void)
-{
-	/* Enable GPIOA clock. */
-	rcc_periph_clock_enable(RCC_GPIOA);
-
-	/* Set GPIO0 (in GPIO port A) to 'input open-drain'. */
-	gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO0);
-}
-
+// main funciton
 int main(void)
 {
-	int i;
+	// Setup clock
+	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
 
-	clock_setup();
-	button_setup();
-	gpio_setup();
+	// Setup GPIO
+	rcc_periph_clock_enable(RCC_GPIOB);
+	gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO3 | GPIO4 | GPIO5);
+	gpio_set_af(GPIOB, GPIO_AF2,  GPIO3);
+	gpio_set_af(GPIOB, GPIO_AF1,  GPIO4);	  		
+	gpio_set_af(GPIOB, GPIO_AF6,  GPIO5);	  		
 
-	/* Blink the LED (PD12) on the board. */
-	while (1) {
-		gpio_toggle(GPIOD, GPIO12);
+	rcc_periph_clock_enable(RCC_GPIOD);
+	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
+	
+	// Setup SPI
+	rcc_periph_clock_enable(RCC_SPI3);
+	spi_set_master_mode(SPI3);
+	spi_set_baudrate_prescaler(SPI3, SPI_CR1_BR_FPCLK_DIV_64);
+	spi_set_clock_polarity_0(SPI3);
+	spi_set_clock_phase_0(SPI3);
+	spi_set_full_duplex_mode(SPI3);
+	spi_set_unidirectional_mode(SPI3);
+	spi_set_dff_8bit(SPI3);
+	spi_enable_software_slave_management(SPI3);
+	spi_send_msb_first(SPI3);
+	spi_enable(SPI3);	
+	
 
-		/* Upon button press, blink more slowly. */
-		exti_line_state = GPIOA_IDR;
-		if ((exti_line_state & (1 << 0)) != 0) {
-			for (i = 0; i < 3000000; i++) {	/* Wait a bit. */
-				__asm__("nop");
-			}
-		}
-
-		for (i = 0; i < 3000000; i++) {		/* Wait a bit. */
+	// Infinite loop
+	uint8_t test = 0;
+	while(true)
+	{
+		spi_write(SPI3, test++);
+		//spi_read(SPI3);		
+		gpio_port_write(GPIOD, test << 12);
+		int i;
+		for(i = 0; i < 0xFFFFFF; ++i)
+		{
 			__asm__("nop");
 		}
 	}
-
-	return 0;
 }
