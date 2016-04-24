@@ -179,7 +179,7 @@ void cdcacm_set_config(usbd_device *usbd_dev, uint16_t wValue)
 				USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
 				cdcacm_control_request);
 }
-void usb_write(usbd_device* usbd_dev, const void* buf, uint16_t len)
+void usb_write(const void* buf, uint16_t len)
 {
 	if(!USB_READY)
 	{
@@ -189,9 +189,26 @@ void usb_write(usbd_device* usbd_dev, const void* buf, uint16_t len)
 	while (usbd_ep_write_packet(usbd_dev, 0x82, buf, len) == 0);
 }
 
+void setup_usb(void)
+{
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_OTGFS);
+
+	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE,
+			GPIO9 | GPIO11 | GPIO12);
+	gpio_set_af(GPIOA, GPIO_AF10, GPIO9 | GPIO11 | GPIO12);
+
+	usbd_dev = usbd_init(&otgfs_usb_driver, &dev, &config,
+			usb_strings, 2,
+			usbd_control_buffer, sizeof(usbd_control_buffer));
+
+	usbd_register_set_config_callback(usbd_dev, cdcacm_set_config);
+}
+
 
 /*
  * Global variables
  */
 
 uint8_t USB_READY = 0;
+usbd_device *usbd_dev = NULL;

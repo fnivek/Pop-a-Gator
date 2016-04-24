@@ -17,15 +17,7 @@
 #include "/home/fnivek/stm32f4_hardware_interface/libopencm3/lib/usb/usb_private.h"
 
 #include "usb.h"
-
-
-//#define MMIO32(addr)		(*(volatile uint32_t *)(addr))
-//#define dev_base_address (usbd_dev->driver->base_address)
-//#define REBASE(x)        MMIO32((x) + (dev_base_address))
-//#define OTG_DIEPCTL(x)			(0x900 + 0x20*(x))
-//#define OTG_DIEPCTL0_EPENA		(1 << 31)
-//#define OTG_DIEPCTL0_EPDIS		(1 << 30)
-
+#include "systick_handler.h"
 
 /*
  * 	Pin map
@@ -33,6 +25,13 @@
  * 		B4 - SPI3_MISO
  * 		B5 - SPI3_MOSI
  */
+
+// Heartbeat function
+void beat(void)
+{
+	char buf[] = "Beat";
+	usb_write(buf, sizeof(buf));
+}
 
 // main funciton
 int main(void)
@@ -78,22 +77,16 @@ int main(void)
 	spi_enable(SPI3);	*/
 	
 	// Setup USB
-	usbd_device *usbd_dev;
-	rcc_periph_clock_enable(RCC_GPIOA);
-	rcc_periph_clock_enable(RCC_OTGFS);
+	setup_usb();
 
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE,
-			GPIO9 | GPIO11 | GPIO12);
-	gpio_set_af(GPIOA, GPIO_AF10, GPIO9 | GPIO11 | GPIO12);
+	// Start system tic
+	systick_setup();
 
-	usbd_dev = usbd_init(&otgfs_usb_driver, &dev, &config,
-			usb_strings, 2,
-			usbd_control_buffer, sizeof(usbd_control_buffer));
-
-	usbd_register_set_config_callback(usbd_dev, cdcacm_set_config);
+	// Setup heartbeat
+	systick_callback beat_cb = {beat, 1000};
+	systick_callbacks[0] = beat_cb;
 
 	// Infinite loop
-	uint8_t test = 0;
 	while(true)
 	{
 		/*spi_write(SPI3, test++);
@@ -102,11 +95,6 @@ int main(void)
 		usart_send_blocking(USART2, test + '0');
 		usart_send_blocking(USART2, '\r');
 		usart_send_blocking(USART2, '\n');*/
-		char buf[1];
-		buf[0] = (char)(test++ + '0');
-		if(test > 80)
-			test = 0;
-		usb_write(usbd_dev, buf, 1);
 		usbd_poll(usbd_dev);
 
 		int i;
