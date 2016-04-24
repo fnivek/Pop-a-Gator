@@ -203,6 +203,14 @@ void setup_usb(void)
 			usbd_control_buffer, sizeof(usbd_control_buffer));
 
 	usbd_register_set_config_callback(usbd_dev, cdcacm_set_config);
+
+	// Set up to poll every millisecond
+	add_systick_callback(usb_poll, 1);
+}
+
+void usb_poll(void)
+{
+	usbd_poll(usbd_dev);
 }
 
 

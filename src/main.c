@@ -31,6 +31,7 @@ void beat(void)
 {
 	char buf[] = "Beat";
 	usb_write(buf, sizeof(buf));
+	gpio_toggle(GPIOD, GPIO14);
 }
 
 // main funciton
@@ -83,8 +84,7 @@ int main(void)
 	systick_setup();
 
 	// Setup heartbeat
-	systick_callback beat_cb = {beat, 1000};
-	systick_callbacks[0] = beat_cb;
+	add_systick_callback(beat, 1000);
 
 	// Infinite loop
 	while(true)
@@ -95,12 +95,5 @@ int main(void)
 		usart_send_blocking(USART2, test + '0');
 		usart_send_blocking(USART2, '\r');
 		usart_send_blocking(USART2, '\n');*/
-		usbd_poll(usbd_dev);
-
-		int i;
-		for(i = 0; i < 0xFF; ++i)
-		{
-			__asm__("nop");
-		}
 	}
 }
