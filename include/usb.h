@@ -51,6 +51,7 @@ void cdcacm_set_config(usbd_device *usbd_dev, uint16_t wValue);
 void usb_write(const void* buf, uint16_t len);
 void setup_usb(void);
 void usb_poll(void);
+void usb_write_string(const char* buf);
 
 
 /*

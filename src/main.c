@@ -8,7 +8,6 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
 #include <stdlib.h>
-#include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/cdc.h>
@@ -18,6 +17,7 @@
 
 #include "usb.h"
 #include "systick_handler.h"
+#include "bluetooth.h"
 
 /*
  * 	Pin map
@@ -29,9 +29,40 @@
 // Heartbeat function
 void beat(void)
 {
-	char buf[] = "Beat";
-	usb_write(buf, sizeof(buf));
 	gpio_toggle(GPIOD, GPIO14);
+}
+
+// Test the bluetooth module
+int8_t test_bluetooth(void)
+{
+	// Clear read
+	flush_bluetooth_input();
+
+	usb_write_string("\n\rStart blue tooth test\n\r");
+	write_bluetooth('A');
+	write_bluetooth('T');
+	usb_write_string("\n\rWrote AT\n\r");
+
+	char buf[] = "BT replied w/: ##";
+	
+	usb_write_string("\n\rWait for some data\n\r");
+	uint16_t data = read_bluetooth(1000);
+	buf[15] = data;
+	data = read_bluetooth(1000);
+	buf[16] = data;
+	usb_write(buf, sizeof(buf));
+
+	if( buf[15] == 'O' && buf[16] == 'K' )
+	{
+		usb_write_string("\n\rBluetooth test past!\n\r");
+		return 0;
+	}
+	else
+	{
+		usb_write_string("\n\rBluetooth test failed!\n\r");
+		return -1;
+	}
+
 }
 
 // main funciton
@@ -47,24 +78,10 @@ int main(void)
 	//gpio_set_af(GPIOB, GPIO_AF1,  GPIO4);	  	// SPI3_MISO
 	//gpio_set_af(GPIOB, GPIO_AF6,  GPIO5);	  	// SPI3_MOSI
 
-	//rcc_periph_clock_enable(RCC_GPIOA);
-	//gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
-	//gpio_set_af(GPIOA, GPIO_AF7, GPIO2);
-
 	rcc_periph_clock_enable(RCC_GPIOD);
 	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
 	
-	/* Setup uart
-	rcc_periph_clock_enable(RCC_USART2);
-	usart_set_baudrate(USART2, 9600);
-	usart_set_databits(USART2, 8);
-	usart_set_stopbits(USART2, USART_STOPBITS_1);
-	usart_set_mode(USART2, USART_MODE_TX);
-	usart_set_parity(USART2, USART_PARITY_NONE);
-	usart_set_flow_control(USART2, USART_FLOWCONTROL_NONE);
-	usart_enable(USART2);
-	
-	// Setup SPI
+	/* Setup SPI
 	rcc_periph_clock_enable(RCC_SPI3);
 	spi_set_master_mode(SPI3);
 	spi_set_baudrate_prescaler(SPI3, SPI_CR1_BR_FPCLK_DIV_64);
@@ -80,11 +97,17 @@ int main(void)
 	// Setup USB
 	setup_usb();
 
+	// Setup Bluetooth
+	setup_bluetooth();
+
 	// Start system tic
 	systick_setup();
 
 	// Setup heartbeat
 	add_systick_callback(beat, 1000);
+
+	// Test bluetooth
+	//add_systick_callback(test_bluetooth, 5000);
 
 	// Infinite loop
 	while(true)
@@ -94,6 +117,8 @@ int main(void)
 		gpio_port_write(GPIOD, test << 12);
 		usart_send_blocking(USART2, test + '0');
 		usart_send_blocking(USART2, '\r');
-		usart_send_blocking(USART2, '\n');*/
+		usart_send_blocking(USART2, '\n\r');*/
+		if( system_millis > 10000)
+			test_bluetooth();
 	}
 }

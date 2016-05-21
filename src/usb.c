@@ -214,6 +214,14 @@ void usb_poll(void)
 }
 
 
+void usb_write_string(const char* buf)
+{
+	int size = 0;
+	while(buf[size++] != '\0');
+	usb_write(buf, size);
+}
+
+
 /*
  * Global variables
  */
