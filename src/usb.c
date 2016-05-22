@@ -221,6 +221,11 @@ void usb_write_string(const char* buf)
 	usb_write(buf, size);
 }
 
+int8_t is_usb_ready(void)
+{
+	return USB_READY;
+}
+
 
 /*
  * Global variables

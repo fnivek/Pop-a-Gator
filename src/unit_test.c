@@ -23,34 +23,46 @@ void beat(void)
 	gpio_toggle(GPIOD, GPIO15);
 }
 
+// Test USB debug comms
+int8_t test_usb(void)
+{
+	while(!is_usb_ready());
+
+	usb_write_string("\n\r\n\rStarting USB test\n\rPlease type pop...\n\r\t");
+	usb_write_string("\n\rTODO: Write a USB read funciton");
+	usb_write_string("\n\rUSB test results: Unkown");
+	return -1;
+}
+
 // Test the bluetooth module
 int8_t test_bluetooth(void)
 {
 	// Clear read
 	flush_bluetooth_input();
 
-	usb_write_string("\n\rStart blue tooth test\n\r");
+	usb_write_string("\n\r\n\rStart bluetooth test");
+	usb_write_string("\n\rWriting AT to bluetooth chip\n\r");
+
+	char buf[] = "Bluetooth chip replied w/: ##";
+	// Write AT
 	write_bluetooth('A');
 	write_bluetooth('T');
-	usb_write_string("\n\rWrote AT\n\r");
 
-	char buf[] = "BT replied w/: ##";
-	
-	usb_write_string("\n\rWait for some data\n\r");
+	// Read result
 	uint16_t data = read_bluetooth(1000);
-	buf[15] = data;
+	buf[27] = data;
 	data = read_bluetooth(1000);
-	buf[16] = data;
+	buf[28] = data;
 	usb_write(buf, sizeof(buf));
 
-	if( buf[15] == 'O' && buf[16] == 'K' )
+	if( buf[27] == 'O' && buf[28] == 'K' )
 	{
-		usb_write_string("\n\rBluetooth test past!\n\r");
+		usb_write_string("\n\rBluetooth test past!");
 		return 0;
 	}
 	else
 	{
-		usb_write_string("\n\rBluetooth test failed!\n\r");
+		usb_write_string("\n\rBluetooth test failed!");
 		return -1;
 	}
 
@@ -77,12 +89,30 @@ int main(void)
 	// Setup heartbeat
 	add_systick_callback(beat, 1000);
 
+	// Begin tests
+	int8_t result = 
+		test_usb() | 
+		test_bluetooth();
 
+	if(!result)
+	{
+		usb_write_string("\n\r\n\rAll test complete succesfully!");
+		gpio_set(GPIOD, GPIO12);
+	}
+	else
+	{
+		 usb_write_string("\n\r\n\rSome test failed!");
+		 gpio_set(GPIOD, GPIO14);
+	}
+
+	usb_write_string("\n\rEntering infinte loop");
+
+	
 	// Infinite loop
 	while(true)
 	{
-
-		if( system_millis > 10000)
-			test_bluetooth();
+		if(!(system_millis % 5000))
+		{
+		}
 	}
 }

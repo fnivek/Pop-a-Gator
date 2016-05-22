@@ -52,6 +52,7 @@ void usb_write(const void* buf, uint16_t len);
 void setup_usb(void);
 void usb_poll(void);
 void usb_write_string(const char* buf);
+int8_t is_usb_ready(void);
 
 
 /*
