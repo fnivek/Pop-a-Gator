@@ -1,7 +1,7 @@
 ############################################################
 # Project
 ############################################################
-PROJECT = nordic_interface
+PROJECT = Pop-a-Gator
 
 
 ############################################################
@@ -47,9 +47,12 @@ STFLASH = st-flash
 ############################################################
 # Source Files
 ############################################################
-C_FILES = $(shell find $(SOURCE_DIR) -type f -name '*.c')
+ALL_C_FILES = $(shell find $(SOURCE_DIR) -type f -name '*.c')
+MAIN_C_FILES = $(filter-out $(SOURCE_DIR)/unit_test.c, $(ALL_C_FILES))
+UNIT_TEST_C_FILES = $(filter-out $(SOURCE_DIR)/main.c, $(ALL_C_FILES))
 S_FILES = $(shell find $(SOURCE_DIR) -type f -name '*.S')
-O_FILES = $(C_FILES:.c=.o) $(S_FILES:.S=.o)
+O_FILES = $(MAIN_C_FILES:.c=.o) $(S_FILES:.S=.o)
+UNIT_TEST_O_FILES = $(UNIT_TEST_C_FILES:.c=.o) $(S_FILES:.S=.o)
 
 
 ############################################################
@@ -70,7 +73,7 @@ LD_FLAGS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 # Targets: Actions
 ############################################################
 .SUFFIXES: .c .eep .h .hex .o .elf .s .S
-.PHONY: all bin elf flash clean
+.PHONY: all bin elf flash clean unit_test
 
 all: elf
 
@@ -78,7 +81,12 @@ elf: $(BUILD_DIR)/$(PROJECT).elf
 
 bin: $(BUILD_DIR)/$(PROJECT).bin
 
+unit_test: $(BUILD_DIR)/$(PROJECT)_unit_test.bin
+
 flash: $(BUILD_DIR)/$(PROJECT).bin
+	$(STFLASH) write $< 0x08000000
+
+flash_unit_test: $(BUILD_DIR)/$(PROJECT)_unit_test.bin
 	$(STFLASH) write $< 0x08000000
 
 erase:
@@ -94,7 +102,13 @@ clean:
 $(BUILD_DIR)/$(PROJECT).elf: libopencm3 $(O_FILES)
 	$(LD) -o $@ $(O_FILES) $(LD_FLAGS)
 
+$(BUILD_DIR)/$(PROJECT)_unit_test.elf: libopencm3 $(UNIT_TEST_O_FILES)
+	$(LD) -o $@ $(UNIT_TEST_O_FILES) $(LD_FLAGS)
+
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT).elf
+	$(OBJCOPY) -Obinary $< $@
+
+$(BUILD_DIR)/$(PROJECT)_unit_test.bin: $(BUILD_DIR)/$(PROJECT)_unit_test.elf
 	$(OBJCOPY) -Obinary $< $@
 
 %.o: %.c
