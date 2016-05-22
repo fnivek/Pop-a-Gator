@@ -105,7 +105,7 @@ int main(void)
 		 gpio_set(GPIOD, GPIO14);
 	}
 
-	usb_write_string("\n\rEntering infinte loop");
+	usb_write_string("\n\rFinished");
 
 	
 	// Infinite loop
