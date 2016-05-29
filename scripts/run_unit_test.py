@@ -5,7 +5,7 @@ import os
 
 # Make and flash the unit test
 FILE_LOCATION =  os.path.dirname(os.path.abspath(__file__))
-os.system("cd " + FILE_LOCATION + " ../")
+os.chdir(FILE_LOCATION + "/../")
 print os.system("make flash_unit_test")
 
 # Ask the user to reset the board
