@@ -7,8 +7,8 @@
 #include "usb.h"
 #include "systick_handler.h"
 #include "bluetooth.h"
+#include "debug_leds.h"
 
 void setup_board(void);
-void beat(void);
 
 #endif

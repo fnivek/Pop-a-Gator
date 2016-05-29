@@ -1,4 +1,5 @@
 #include "board.h"
+#include "debug_leds.h"
 
 // Test USB debug comms
 int8_t test_usb(void)
@@ -49,6 +50,8 @@ int8_t test_bluetooth(void)
 int main(void)
 {
 	setup_board();
+	set_heartbeat_led(DEBUG_BLUE_LED);
+	clear_debug_led(DEBUG_ALL_LEDS);
 
 	// Begin tests
 	int8_t result = 
