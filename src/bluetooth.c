@@ -26,6 +26,11 @@ uint16_t read_bluetooth(uint32_t timeout)
 	uint32_t end = system_millis + timeout;
 	while(!(USART_SR(USART2) & USART_SR_RXNE) && end > system_millis);
 
+	if(end <= system_millis)
+	{
+		return 0xFFFF;
+	}
+
 	return usart_recv(USART2);
 }
 

@@ -164,6 +164,11 @@ void cdcacm_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 	if (len) {
 		USB_READY = 1;
 		while (usbd_ep_write_packet(usbd_dev, 0x82, buf, len) == 0);
+		int i = 0;
+		for(; i < len; ++i)
+		{
+			write_bluetooth(buf[i]);
+		}
 	}
 }
 void cdcacm_set_config(usbd_device *usbd_dev, uint16_t wValue)
