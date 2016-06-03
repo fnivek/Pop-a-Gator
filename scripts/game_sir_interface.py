@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+
 from bluetooth import *
 import sys
+
 services = find_service()
 
 gamepad = None
@@ -60,6 +63,8 @@ try:
         data = sock.recv(1024)
         print '-----------------'
         formated_data = [ord(c) for c in data]
+        print formated_data
+
         if len(formated_data) < 10:
             print 'Home button'
             continue
