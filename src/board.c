@@ -9,5 +9,5 @@ void setup_board(void)
 	setup_debug_leds();
 	setup_usb();
 	setup_bluetooth();
-	systick_setup();
+	setup_systick();
 }

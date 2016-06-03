@@ -18,7 +18,7 @@ void sys_tick_handler(void)
 	}
 }
 
-void systick_setup(void)
+void setup_systick(void)
 {
 	// Clock rate / 1000 = 168000 for one ms
 	systick_set_reload(168000);

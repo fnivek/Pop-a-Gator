@@ -31,7 +31,7 @@ systick_callback_list systick_callbacks;
 // Functions
 void sys_tick_handler(void);
 
-void systick_setup(void);
+void setup_systick(void);
 
 int add_systick_callback(void (*callback)(void), uint32_t period);
 int remove_systick_callback(void (*callback)(void));
