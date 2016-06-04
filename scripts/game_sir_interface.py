@@ -3,7 +3,34 @@
 from bluetooth import *
 import sys
 from collections import OrderedDict
+import argparse
+import serial
 
+# Take in command line args
+parser = argparse.ArgumentParser(description='Interface with a game sir remote')
+
+parser.add_argument('--pass_to_serial', action='store_true',
+        help='Pass the bluetooth data over to the serial connection')
+parser.add_argument('--print_log', action='store_true',
+        help='Print the log of all raw data')
+parser.add_argument('--device', default="/dev/serial/by-id/usb-PopaGator_Toad-if00",
+        help='Name of the serial device to pass the bluetooth data to')
+
+cmd_args = parser.parse_args()
+
+# Connect to serial interface
+ser = serial.Serial()
+if cmd_args.pass_to_serial:
+    print "Connecting to device:\t" + cmd_args.device + "..."
+    # Open a serial port
+    ser = serial.Serial("/dev/serial/by-id/usb-PopaGator_Toad-if00", 115200)
+
+    # Send data to start USB OTG
+    ser.write("start")
+    print "Connected to device:\t" + cmd_args.device
+
+# Connect to bluetooth
+print "Connecting to gamesir over bluetooth..."
 services = find_service()
 
 gamepad = None
@@ -28,7 +55,7 @@ else:
 sock=BluetoothSocket( protocol )
 sock.connect((gamepad['host'], int(gamepad['port'])))
 
-print 'Connected'
+print 'Connected to gamesir over bluetooth'
 
 gamepad_map = OrderedDict()
 gamepad_map['LEFT_STICK_LR'] =         2
@@ -63,6 +90,8 @@ state = ''
 try:
     while True:
         data = sock.recv(1024)
+        if cmd_args.pass_to_serial:
+            ser.write(data)
         print '-----------------'
         formated_data = [ord(c) for c in data]
         print formated_data
@@ -96,7 +125,9 @@ try:
         state += '},\n'
 
 finally:
-    print raw_data
-    print '\n'
-    print state
+    if cmd_args.print_log:
+        print raw_data
+        print '\n'
+        print state
+
     sock.close()
