@@ -8,6 +8,7 @@
 #include "systick_handler.h"
 #include "bluetooth.h"
 #include "debug_leds.h"
+#include "motors.h"
 
 void SetupBoard(void);
 
