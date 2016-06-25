@@ -7,11 +7,11 @@
 
 #include "systick_handler.h"
 
-void setup_bluetooth(void);
+void SetupBluetooth(void);
 
-uint16_t read_bluetooth(uint32_t timeout);
+uint16_t ReadBluetooth(uint32_t timeout);
 
-void write_bluetooth(uint16_t data);
+void WriteBluetooth(uint16_t data);
 
-void flush_bluetooth_input(void);
+void FlushBluetoothInput(void);
 #endif

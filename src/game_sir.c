@@ -1,6 +1,6 @@
 #include "game_sir.h"
 
-void game_sir_new_data(uint8_t new_data)
+void GameSirNewData(uint8_t new_data)
 {
 	// IDLE state
 	if(current_msg_decode_state == IDLE)

@@ -18,7 +18,7 @@ void sys_tick_handler(void)
 	}
 }
 
-void setup_systick(void)
+void SetupSystick(void)
 {
 	// Clock rate / 1000 = 168000 for one ms
 	systick_set_reload(168000);
@@ -27,7 +27,7 @@ void setup_systick(void)
 	systick_interrupt_enable();
 }
 
-int add_systick_callback(void (*callback)(void), uint32_t period)
+int AddSystickCallback(void (*callback)(void), uint32_t period)
 {
 	if(systick_callbacks.index < MAX_CALLBACKS)
 	{
@@ -38,7 +38,7 @@ int add_systick_callback(void (*callback)(void), uint32_t period)
 	return -1;
 }
 
-int remove_systick_callback(void (*callback)(void))
+int RemoveSystickCallback(void (*callback)(void))
 {
 	int not_found = -1;
 	int i;

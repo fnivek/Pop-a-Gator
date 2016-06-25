@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "usb.h"
 
 #define START_INDICATOR					0xA1	// The value of the byte that precedes all messages packages
 #define STD_MSG_INDICATOR				0xC4	// The value of the byte that precedes a standard message package
@@ -114,7 +113,7 @@ static enum MESSAGE_DECODE_STATE current_msg_decode_state = IDLE;
 static uint8_t current_byte = 0;
 
 // Function to handle new incoming data
-void game_sir_new_data(uint8_t new_data);
+void GameSirNewData(uint8_t new_data);
 
 // Function to get a button value
 uint8_t game_sir_get_btn_value(enum CONTROLLER_INDICES button_index);

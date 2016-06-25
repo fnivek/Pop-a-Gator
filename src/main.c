@@ -7,7 +7,7 @@
 // main funciton
 int main(void)
 {
-	setup_board();
+	SetupBoard();
 
 	// Infinite loop
 	while(true)

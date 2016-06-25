@@ -9,6 +9,6 @@
 #include "bluetooth.h"
 #include "debug_leds.h"
 
-void setup_board(void);
+void SetupBoard(void);
 
 #endif

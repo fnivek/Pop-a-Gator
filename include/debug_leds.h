@@ -15,11 +15,11 @@ static const DebugLed DEBUG_ALL_LEDS =		GPIO12 | GPIO13 | GPIO14 | GPIO15;
 
 static DebugLed heartbeat_led;
 
-void setup_debug_leds(void);
-void set_heartbeat_led(DebugLed color);
-void beat(void);
-void set_debug_led(DebugLed color);
-void clear_debug_led(DebugLed color);
-void toggle_debug_led(DebugLed color);
+void SetupDebugLeds(void);
+void SetHeartbeatLed(DebugLed color);
+void Beat(void);
+void SetDebugLed(DebugLed color);
+void ClearDebugLed(DebugLed color);
+void ToggleDebugLed(DebugLed color);
 
 #endif

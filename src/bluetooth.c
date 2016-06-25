@@ -1,6 +1,6 @@
 #include "bluetooth.h"
 
-void setup_bluetooth(void)
+void SetupBluetooth(void)
 {
 	// Setup GPIO
 	rcc_periph_clock_enable(RCC_GPIOA);
@@ -21,7 +21,7 @@ void setup_bluetooth(void)
 
 }
 
-uint16_t read_bluetooth(uint32_t timeout)
+uint16_t ReadBluetooth(uint32_t timeout)
 {
 	uint32_t end = system_millis + timeout;
 	while(!(USART_SR(USART2) & USART_SR_RXNE) && end > system_millis);
@@ -29,12 +29,12 @@ uint16_t read_bluetooth(uint32_t timeout)
 	return usart_recv(USART2);
 }
 
-void write_bluetooth(uint16_t data)
+void WriteBluetooth(uint16_t data)
 {
 	usart_send_blocking(USART2, data);
 }
 
-void flush_bluetooth_input(void)
+void FlushBluetoothInput(void)
 {
 	volatile uint16_t _ = usart_recv(USART2);
 }

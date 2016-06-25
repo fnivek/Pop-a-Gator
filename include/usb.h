@@ -43,15 +43,15 @@ uint8_t usbd_control_buffer[128];
 /*
  * 		Functions
  */
-int cdcacm_control_request(usbd_device *usbd_dev,
+int CDCACMControlRequest(usbd_device *usbd_dev,
 	struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 	void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req));
-void cdcacm_data_rx_cb(usbd_device *usbd_dev, uint8_t ep);
-void cdcacm_set_config(usbd_device *usbd_dev, uint16_t wValue);
-void usb_write(const void* buf, uint16_t len);
-void setup_usb(void);
-void usb_poll(void);
-void usb_write_string(const char* buf);
+void CDCACMDataRxCb(usbd_device *usbd_dev, uint8_t ep);
+void CDCACMSetConfig(usbd_device *usbd_dev, uint16_t wValue);
+void UsbWrite(const void* buf, uint16_t len);
+void SetupUsb(void);
+void UsbPoll(void);
+void UsbWriteString(const char* buf);
 int8_t is_usb_ready(void);
 
 
