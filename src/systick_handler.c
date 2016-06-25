@@ -1,5 +1,8 @@
 #include "systick_handler.h"
 
+// Vars
+SystickCallbackList systick_callbacks; 
+
 // Initilize globals
 volatile uint32_t system_millis = 0;
 SystickCallbackList systick_callbacks = {0};
@@ -29,7 +32,7 @@ void SetupSystick(void)
 
 int AddSystickCallback(void (*callback)(void), uint32_t period)
 {
-	if(systick_callbacks.index < MAX_CALLBACKS)
+	if(systick_callbacks.index < kMaxCallbacks)
 	{
 		systick_callbacks.callback_list[systick_callbacks.index].callback = callback;
 		systick_callbacks.callback_list[systick_callbacks.index++].period = period;

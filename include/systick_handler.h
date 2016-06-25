@@ -4,8 +4,11 @@
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/cm3/nvic.h>
 
-// Defines
-#define MAX_CALLBACKS 10
+// constants
+#define kMaxCallbacks 10
+
+// Globals
+volatile uint32_t system_millis;
 
 // Types
 typedef struct SystickCallback
@@ -20,13 +23,10 @@ typedef struct SystickCallback
 typedef struct SystickCallbackList
 {
 	uint8_t index;
-	SystickCallback callback_list[MAX_CALLBACKS];
+	SystickCallback callback_list[kMaxCallbacks];
 
 } SystickCallbackList;
 
-// Globals
-volatile uint32_t system_millis;
-SystickCallbackList systick_callbacks; 
 
 // Functions
 void SysTickHandler(void);

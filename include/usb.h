@@ -19,7 +19,7 @@
 	struct usb_cdc_call_management_descriptor call_mgmt;
 	struct usb_cdc_acm_descriptor acm;
 	struct usb_cdc_union_descriptor cdc_union;
-} __attribute__((packed)) functional_descriptor;
+} __attribute__((packed)) FunctionalDescriptor;
 
 // USB OTG setup
 const struct usb_device_descriptor dev;
@@ -30,7 +30,7 @@ const struct usb_device_descriptor dev;
  */
 extern const struct usb_endpoint_descriptor comm_endp[];
 extern const struct usb_endpoint_descriptor data_endp[];
-const functional_descriptor cdcacm_functional_descriptors;
+const FunctionalDescriptor cdcacm_functional_descriptors;
 extern const struct usb_interface_descriptor comm_iface[];
 extern const struct usb_interface_descriptor data_iface[];
 extern const struct usb_interface ifaces[];
@@ -53,13 +53,5 @@ void SetupUsb(void);
 void UsbPoll(void);
 void UsbWriteString(const char* buf);
 int8_t is_usb_ready(void);
-
-
-/*
- * Global variables
- */
-
-uint8_t USB_READY;
-usbd_device *usbd_dev;
 
 #endif

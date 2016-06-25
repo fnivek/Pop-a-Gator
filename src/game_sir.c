@@ -1,65 +1,70 @@
 #include "game_sir.h"
 
+// Constants
+const uint8_t kStartIndicator =					0xA1;	// The value of the byte that precedes all messages packages
+const uint8_t kStdMsgIndicator =				0xC4;	// The value of the byte that precedes a standard message package
+const uint8_t kHomeBtnMsgIndicator =			0x12;	// The value of the byte that precedes a home btn message package
+
 void GameSirNewData(uint8_t new_data)
 {
 	// IDLE state
-	if(current_msg_decode_state == IDLE)
+	if(current_msg_decode_state == kIdle)
 	{
-		if(new_data == START_INDICATOR)
+		if(new_data == kStartIndicator)
 		{
 			// New message detected
-			current_msg_decode_state = DETERMINE_PKG_TYPE;
+			current_msg_decode_state = kDeterminePkgType;
 		}
 	}
 
-	// DETERMINE_PKG_TYPE state
-	else if(current_msg_decode_state == DETERMINE_PKG_TYPE)
+	// kDeterminePkgType state
+	else if(current_msg_decode_state == kDeterminePkgType)
 	{
 		// Reset the byte counter
 		current_byte = 0;
 
-		if(new_data == STD_MSG_INDICATOR)
+		if(new_data == kStdMsgIndicator)
 		{
-			current_msg_decode_state = STD_PKG;
+			current_msg_decode_state = kStdPkg;
 		}
-		else if(new_data == HOME_BTN_MSG_INDICATOR)
+		else if(new_data == kHomeBtnMsgIndicator)
 		{
-			current_msg_decode_state = HOME_BTN_PKG;
+			current_msg_decode_state = kHomeBtnPkg;
 		}
 		else // Message skew detected!!!
 		{
 			// ERROR!!!!
-			current_msg_decode_state = IDLE;
+			current_msg_decode_state = kIdle;
 		}
 	}
 
-	// HOME_BTN_PKG state
-	else if(current_msg_decode_state == HOME_BTN_PKG)
+	// kHomeBtnPkg state
+	else if(current_msg_decode_state == kHomeBtnPkg)
 	{
-		if(current_byte == remote[HOME_BTN_INDEX].byte_position)
+		if(current_byte == remote[kHomeBtnIndex].byte_position)
 		{
-			remote[HOME_BTN_INDEX].value = remote[HOME_BTN_INDEX].mask & new_data;
+			remote[kHomeBtnIndex].value = remote[kHomeBtnIndex].mask & new_data;
 		}
-		else if(current_byte >= (HOME_BTN_MSG_PKG_SIZE - 1))
+		else if(current_byte >= (kHomeBtnMsgPkgSize - 1))
 		{
-			current_msg_decode_state = IDLE;
+			current_msg_decode_state = kIdle;
 		}
 		++current_byte;
 	}
 
-	// STD_PKG state
-	else if(current_msg_decode_state == STD_PKG)
+	// kStdPkg state
+	else if(current_msg_decode_state == kStdPkg)
 	{
 		// Since there is an empty byte at the end of the std message package we can skip the final for loop
-		if(current_byte >= (STD_MSG_PKG_SIZE - 1))
+		if(current_byte >= (kStdMsgPkgSize - 1))
 		{
-			current_msg_decode_state = IDLE;
+			current_msg_decode_state = kIdle;
 			return;
 		}
 
 		// Loop through all buttons
-		int btn_index = LEFT_STICK_LR_INDEX;		// Skip the home button
-		for(; btn_index < NUM_BUTTONS; ++btn_index)
+		int btn_index = kLeftStickLRIndex;		// Skip the home button
+		for(; btn_index < kNumBtns; ++btn_index)
 		{
 			// Check if this is the byte coresponding to this button
 			if(current_byte == remote[btn_index].byte_position)
@@ -76,7 +81,7 @@ void GameSirNewData(uint8_t new_data)
 }
 
 // Function to get a button value
-uint8_t game_sir_get_btn_value(enum CONTROLLER_INDICES button_index)
+uint8_t game_sir_get_btn_value(enum ControllerIndices button_index)
 {
 	return remote[button_index].value;
 }
