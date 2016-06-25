@@ -75,10 +75,10 @@ typedef struct
 	//const uint8_t toogle;
 	const uint8_t mask;					// Button mask for buttons that share a byte
 	uint8_t value;						// Current value of the button
-} button;
+} Button;
 
 // All the buttons on the game sir remote
-static button remote[NUM_BUTTONS] =
+static Button remote[NUM_BUTTONS] =
 {
 	{/*HOME_BTN_INDEX,*/ 				HOME_BTN_BYTE,				/*true,*/ 	0x08,		0	},
 	{/*LEFT_STICK_LR_INDEX,*/ 			LEFT_STICK_LR_BYTE,			/*false,*/ 	0xFF,		128	},

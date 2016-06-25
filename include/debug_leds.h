@@ -6,20 +6,20 @@
 
 #include "systick_handler.h"
 
-typedef uint16_t debug_led;
-static const debug_led DEBUG_GREEN_LED =	GPIO12;
-static const debug_led DEBUG_ORANGE_LED =	GPIO13;
-static const debug_led DEBUG_RED_LED =		GPIO14;
-static const debug_led DEBUG_BLUE_LED =		GPIO15;
-static const debug_led DEBUG_ALL_LEDS =		GPIO12 | GPIO13 | GPIO14 | GPIO15;
+typedef uint16_t DebugLed;
+static const DebugLed DEBUG_GREEN_LED =		GPIO12;
+static const DebugLed DEBUG_ORANGE_LED =	GPIO13;
+static const DebugLed DEBUG_RED_LED =		GPIO14;
+static const DebugLed DEBUG_BLUE_LED =		GPIO15;
+static const DebugLed DEBUG_ALL_LEDS =		GPIO12 | GPIO13 | GPIO14 | GPIO15;
 
-static debug_led heartbeat_led;
+static DebugLed heartbeat_led;
 
 void setup_debug_leds(void);
-void set_heartbeat_led(debug_led color);
+void set_heartbeat_led(DebugLed color);
 void beat(void);
-void set_debug_led(debug_led color);
-void clear_debug_led(debug_led color);
-void toggle_debug_led(debug_led color);
+void set_debug_led(DebugLed color);
+void clear_debug_led(DebugLed color);
+void toggle_debug_led(DebugLed color);
 
 #endif

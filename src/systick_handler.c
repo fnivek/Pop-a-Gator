@@ -2,7 +2,7 @@
 
 // Initilize globals
 volatile uint32_t system_millis = 0;
-systick_callback_list systick_callbacks = {0};
+SystickCallbackList systick_callbacks = {0};
 
 void sys_tick_handler(void)
 {

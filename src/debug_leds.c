@@ -17,22 +17,22 @@ void beat(void)
 	gpio_toggle(GPIOD, heartbeat_led);
 }
 
-void set_heartbeat_led(debug_led color)
+void set_heartbeat_led(DebugLed color)
 {
 	heartbeat_led = color;
 }
 
-void set_debug_led(debug_led color)
+void set_debug_led(DebugLed color)
 {
 	gpio_set(GPIOD, color);
 }
 
-void clear_debug_led(debug_led color)
+void clear_debug_led(DebugLed color)
 {
 	gpio_clear(GPIOD, color);
 }
 
-void toggle_debug_led(debug_led color)
+void toggle_debug_led(DebugLed color)
 {
 	gpio_toggle(GPIOD, color);
 }
