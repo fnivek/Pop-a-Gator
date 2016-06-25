@@ -7,9 +7,9 @@ int8_t test_usb(void)
 {
 	while(!is_usb_ready());
 
-	usb_write_string("\n\r\n\rStarting USB test\n\rPlease type pop...\n\r\t");
-	usb_write_string("\n\rTODO: Write a USB read funciton");
-	usb_write_string("\n\rUSB test results: Unkown");
+	UsbWriteString("\n\r\n\rStarting USB test\n\rPlease type pop...\n\r\t");
+	UsbWriteString("\n\rTODO: Write a USB read funciton");
+	UsbWriteString("\n\rUSB test results: Unkown");
 	return 0;
 }
 
@@ -17,31 +17,31 @@ int8_t test_usb(void)
 int8_t test_bluetooth(void)
 {
 	// Clear read
-	flush_bluetooth_input();
+	FlushBluetoothInput();
 
-	usb_write_string("\n\r\n\rStart bluetooth test");
-	usb_write_string("\n\rWriting AT to bluetooth chip\n\r");
+	UsbWriteString("\n\r\n\rStart bluetooth test");
+	UsbWriteString("\n\rWriting AT to bluetooth chip\n\r");
 
 	char buf[] = "Bluetooth chip replied w/: ##";
 	// Write AT
-	write_bluetooth('A');
-	write_bluetooth('T');
+	WriteBluetooth('A');
+	WriteBluetooth('T');
 
 	// Read result
-	uint16_t data = read_bluetooth(1000);
+	uint16_t data = ReadBluetooth(1000);
 	buf[27] = data;
-	data = read_bluetooth(1000);
+	data = ReadBluetooth(1000);
 	buf[28] = data;
-	usb_write(buf, sizeof(buf));
+	UsbWrite(buf, sizeof(buf));
 
 	if( buf[27] == 'O' && buf[28] == 'K' )
 	{
-		usb_write_string("\n\rBluetooth test past!");
+		UsbWriteString("\n\rBluetooth test past!");
 		return 0;
 	}
 	else
 	{
-		usb_write_string("\n\rBluetooth test failed!");
+		UsbWriteString("\n\rBluetooth test failed!");
 		return -1;
 	}
 
@@ -207,14 +207,14 @@ uint8_t state[][NUM_BUTTONS] =
 };
 int8_t test_game_sir_message_decoder()
 {
-	usb_write_string("\n\r\n\rStarting game sir message decoder test");
+	UsbWriteString("\n\r\n\rStarting game sir message decoder test");
 	uint32_t num_btn_presses = sizeof(raw_game_sir_input);
 	uint32_t press_index;
 	uint8_t button_index;
 	uint32_t current_state_index = 0;
 	for(press_index = 0; press_index < num_btn_presses; ++press_index)
 	{
-		game_sir_new_data(raw_game_sir_input[press_index]);
+		GameSirNewData(raw_game_sir_input[press_index]);
 		if(!press_index | press_index % (STD_MSG_PKG_SIZE + 2))
 		{
 			continue;
@@ -228,24 +228,24 @@ int8_t test_game_sir_message_decoder()
 				char buf[] = "\n\rWas X should be Y";
 				buf[6] = game_sir_get_btn_value(button_index) + '0';
 				buf[18] = state[current_state_index][button_index] + '0';
-				usb_write_string(buf);
-				usb_write_string("\n\rGame sir message decoder test failed!");
+				UsbWriteString(buf);
+				UsbWriteString("\n\rGame sir message decoder test failed!");
 				return -1;
 			}
 		}
 		current_state_index++;
 	}
 	
-	usb_write_string("\n\rGame sir message decoder test past!");
+	UsbWriteString("\n\rGame sir message decoder test past!");
 	return 0;
 }
 
 // main funciton
 int main(void)
 {
-	setup_board();
-	set_heartbeat_led(DEBUG_BLUE_LED);
-	clear_debug_led(DEBUG_ALL_LEDS);
+	SetupBoard();
+	SetHeartbeatLed(DEBUG_BLUE_LED);
+	ClearDebugLed(DEBUG_ALL_LEDS);
 
 	// Begin tests
 	int8_t result = 
@@ -255,16 +255,16 @@ int main(void)
 
 	if(!result)
 	{
-		usb_write_string("\n\r\n\rAll test complete succesfully!");
+		UsbWriteString("\n\r\n\rAll test complete succesfully!");
 		gpio_set(GPIOD, GPIO12);
 	}
 	else
 	{
-		 usb_write_string("\n\r\n\rSome test failed!");
+		 UsbWriteString("\n\r\n\rSome test failed!");
 		 gpio_set(GPIOD, GPIO14);
 	}
 
-	usb_write_string("\n\rFinished");
+	UsbWriteString("\n\rFinished");
 
 	
 	// Infinite loop

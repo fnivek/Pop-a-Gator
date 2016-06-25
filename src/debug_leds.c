@@ -1,6 +1,6 @@
 #include "debug_leds.h"
 
-void setup_debug_leds(void)
+void SetupDebugLeds(void)
 {
 	heartbeat_led = DEBUG_RED_LED;
 
@@ -8,31 +8,31 @@ void setup_debug_leds(void)
 	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, DEBUG_ALL_LEDS);
 
 	// Setup heartbeat
-	add_systick_callback(beat, 1000);
+	AddSystickCallback(Beat, 1000);
 }
 
 // Heartbeat function
-void beat(void)
+void Beat(void)
 {
 	gpio_toggle(GPIOD, heartbeat_led);
 }
 
-void set_heartbeat_led(DebugLed color)
+void SetHeartbeatLed(DebugLed color)
 {
 	heartbeat_led = color;
 }
 
-void set_debug_led(DebugLed color)
+void SetDebugLed(DebugLed color)
 {
 	gpio_set(GPIOD, color);
 }
 
-void clear_debug_led(DebugLed color)
+void ClearDebugLed(DebugLed color)
 {
 	gpio_clear(GPIOD, color);
 }
 
-void toggle_debug_led(DebugLed color)
+void ToggleDebugLed(DebugLed color)
 {
 	gpio_toggle(GPIOD, color);
 }

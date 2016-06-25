@@ -29,11 +29,11 @@ volatile uint32_t system_millis;
 SystickCallbackList systick_callbacks; 
 
 // Functions
-void sys_tick_handler(void);
+void SysTickHandler(void);
 
-void setup_systick(void);
+void SetupSystick(void);
 
-int add_systick_callback(void (*callback)(void), uint32_t period);
-int remove_systick_callback(void (*callback)(void));
+int AddSystickCallback(void (*callback)(void), uint32_t period);
+int RemoveSystickCallback(void (*callback)(void));
 
 #endif
