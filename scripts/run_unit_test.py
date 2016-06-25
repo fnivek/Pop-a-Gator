@@ -2,6 +2,7 @@
 
 import serial
 import os
+import sys
 
 # Make and flash the unit test
 FILE_LOCATION =  os.path.dirname(os.path.abspath(__file__))
@@ -23,10 +24,12 @@ try:
     while True:
         num_chars = ser.inWaiting()
         if num_chars:
-            result += ser.read(num_chars)
+            new = ser.read(num_chars)
+            sys.stdout.write(new)
+            result += new
             if result.find("Finished") != -1:
                 break
 finally:
     # Print the result so the user can see and close the serial port
-    print result
+    #print result
     ser.close()

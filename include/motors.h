@@ -9,14 +9,14 @@
 
 // Structure that represents a motor
 typedef struct {
-	Pin in1;
-	Pin in2;
-	Pin pwm;
+	Pin in1_pin;
+	Pin in2_pin;
+	Pin pwm_pin;
 	uint32_t timer;
 	enum tim_oc_id	output_compare_channel;
 } Motor;
 
-enum Motor {
+enum MotorIndex {
 	kLeftMotor,
 	kRightMotor,
 
@@ -40,7 +40,8 @@ static const Motor motors[] = {
 static const uint32_t kMaxPwmTicks = 4200;
 
 void SetupMotors(void);
-void MotorsSetPWM(Motor motor, uint32_t pwm);
-void MotorsSetDirection(Motor motor, enum MotorDirection direction);
+void MotorsSetPWM(enum MotorIndex index, uint32_t pwm);
+void MotorsSetDirection(enum MotorIndex index, enum MotorDirection direction);
+void MotorsStop(void);
 
 #endif

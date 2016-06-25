@@ -240,6 +240,48 @@ int8_t TestGameSirMessageDecoder()
 	return 0;
 }
 
+int8_t TestMotors() {
+	// TODO: Figure out how to validate motors
+
+	// Test info
+	UsbWriteString("\n\n\rStarting motor test");
+	UsbWriteString("\n\rRamp up forwards");
+
+	// Set motors to forward
+	MotorsSetDirection(kLeftMotor, kForward);
+	MotorsSetDirection(kRightMotor, kForward);
+
+	uint32_t ramp;
+	uint32_t last_time = 0;
+	for (ramp = 0; ramp <= kMaxPwmTicks; ++ramp) {
+		MotorsSetPWM(kLeftMotor, ramp);
+		MotorsSetPWM(kRightMotor, ramp);
+		while(last_time == system_millis);
+		last_time = system_millis;
+	}
+	MotorsStop();
+
+	UsbWriteString("\n\rRamp up backwards");
+
+	// Set motors to forward
+	MotorsSetDirection(kLeftMotor, kReverse);
+	MotorsSetDirection(kRightMotor, kReverse);
+
+	last_time = 0;
+	for (ramp = 0; ramp <= kMaxPwmTicks; ++ramp) {
+		MotorsSetPWM(kLeftMotor, ramp);
+		MotorsSetPWM(kRightMotor, ramp);
+		while(last_time == system_millis);
+		last_time = system_millis;
+	}
+	MotorsStop();
+
+	UsbWriteString("\n\rStoping motors");
+	UsbWriteString("\n\rTest complete");
+
+	return 0;
+}
+
 // main funciton
 int main(void)
 {
@@ -251,7 +293,8 @@ int main(void)
 	int8_t result = 
 		TestUsb() | 
 		TestBluetooth() |
-		TestGameSirMessageDecoder();
+		TestGameSirMessageDecoder() |
+		TestMotors();
 
 	if(!result)
 	{
@@ -270,8 +313,5 @@ int main(void)
 	// Infinite loop
 	while(true)
 	{
-		if(!(system_millis % 5000))
-		{
-		}
 	}
 }
