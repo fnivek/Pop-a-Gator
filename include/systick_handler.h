@@ -8,25 +8,25 @@
 #define MAX_CALLBACKS 10
 
 // Types
-typedef struct systick_callback
+typedef struct SystickCallback
 {
 	// Callback to a function which performs the desired operation
 	void (*callback)(void);
 
 	// The period in milliseconds at which to call the callback
 	uint32_t period;
-} systick_callback;
+} SystickCallback;
 
-typedef struct systick_callback_list
+typedef struct SystickCallbackList
 {
 	uint8_t index;
-	systick_callback callback_list[MAX_CALLBACKS];
+	SystickCallback callback_list[MAX_CALLBACKS];
 
-} systick_callback_list;
+} SystickCallbackList;
 
 // Globals
 volatile uint32_t system_millis;
-systick_callback_list systick_callbacks; 
+SystickCallbackList systick_callbacks; 
 
 // Functions
 void sys_tick_handler(void);
