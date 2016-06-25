@@ -3,7 +3,7 @@
 #include "game_sir.h"
 
 // Test USB debug comms
-int8_t test_usb(void)
+int8_t TestUsb(void)
 {
 	while(!is_usb_ready());
 
@@ -14,7 +14,7 @@ int8_t test_usb(void)
 }
 
 // Test the bluetooth module
-int8_t test_bluetooth(void)
+int8_t TestBluetooth(void)
 {
 	// Clear read
 	FlushBluetoothInput();
@@ -205,7 +205,7 @@ uint8_t state[][kNumBtns] =
 {0, 128, 128, 128, 128, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
 {0, 128, 128, 128, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }
 };
-int8_t test_game_sir_message_decoder()
+int8_t TestGameSirMessageDecoder()
 {
 	UsbWriteString("\n\r\n\rStarting game sir message decoder test");
 	uint32_t num_btn_presses = sizeof(raw_game_sir_input);
@@ -249,9 +249,9 @@ int main(void)
 
 	// Begin tests
 	int8_t result = 
-		test_usb() | 
-		test_bluetooth() |
-		test_game_sir_message_decoder();
+		TestUsb() | 
+		TestBluetooth() |
+		TestGameSirMessageDecoder();
 
 	if(!result)
 	{
