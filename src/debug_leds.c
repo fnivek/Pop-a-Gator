@@ -1,11 +1,13 @@
 #include "debug_leds.h"
 
+static DebugLed heartbeat_led;
+
 void SetupDebugLeds(void)
 {
-	heartbeat_led = DEBUG_RED_LED;
+	heartbeat_led = kDebugRedLed;
 
 	rcc_periph_clock_enable(RCC_GPIOD);
-	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, DEBUG_ALL_LEDS);
+	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, kDebugAllLeds);
 
 	// Setup heartbeat
 	AddSystickCallback(Beat, 1000);

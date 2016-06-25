@@ -1,4 +1,12 @@
 #include "usb.h"
+
+/*
+ * Global variables
+ */
+
+uint8_t USB_READY;
+usbd_device *usbd_dev;
+
 /*
  *			Definitions
  */
@@ -48,7 +56,7 @@ const struct usb_endpoint_descriptor data_endp[] = {{
 	.wMaxPacketSize = 64,
 	.bInterval = 1,
 } };
-const functional_descriptor cdcacm_functional_descriptors = {
+const FunctionalDescriptor cdcacm_functional_descriptors = {
 	.header = {
 		.bFunctionLength = sizeof(struct usb_cdc_header_descriptor),
 		.bDescriptorType = CS_INTERFACE,

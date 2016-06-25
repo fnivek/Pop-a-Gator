@@ -7,13 +7,11 @@
 #include "systick_handler.h"
 
 typedef uint16_t DebugLed;
-static const DebugLed DEBUG_GREEN_LED =		GPIO12;
-static const DebugLed DEBUG_ORANGE_LED =	GPIO13;
-static const DebugLed DEBUG_RED_LED =		GPIO14;
-static const DebugLed DEBUG_BLUE_LED =		GPIO15;
-static const DebugLed DEBUG_ALL_LEDS =		GPIO12 | GPIO13 | GPIO14 | GPIO15;
-
-static DebugLed heartbeat_led;
+static const DebugLed kDebugGreenLed =		GPIO12;
+static const DebugLed kDebugOrangeLed =		GPIO13;
+static const DebugLed kDebugRedLed =		GPIO14;
+static const DebugLed kDebugBlueLed =		GPIO15;
+static const DebugLed kDebugAllLeds =		GPIO12 | GPIO13 | GPIO14 | GPIO15;
 
 void SetupDebugLeds(void);
 void SetHeartbeatLed(DebugLed color);
