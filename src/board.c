@@ -10,4 +10,5 @@ void SetupBoard(void)
 	SetupUsb();
 	SetupBluetooth();
 	SetupSystick();
+	SetupMotors();
 }
