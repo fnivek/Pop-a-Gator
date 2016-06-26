@@ -11,56 +11,55 @@ int main(void)
 {
 	SetupBoard();
 
+	uint8_t no_key_pressed = 1;
+	uint32_t last_sys_millis = 0;
+	MotorsSetDirection(kLeftMotor, kForward);
+
 	// Infinite loop
-	uint16_t result = 0xFFFF;
 	while(true)
 	{
-		result = read_bluetooth(1000);
-		if(result != 0xFFFF)
-		{
-			game_sir_new_data(result);
-			if(game_sir_get_btn_value(HOME_BTN_INDEX))
-			{
-				set_debug_led(DEBUG_ALL_LEDS);
-				continue;
-			}
-			else
-			{
-				clear_debug_led(DEBUG_ALL_LEDS);
-			}
 
-			if(game_sir_get_btn_value(A_INDEX))
-			{
-				set_debug_led(DEBUG_GREEN_LED);
+		// Blink some LEDS
+		if(game_sir_get_btn_value(kHomeBtnIndex))
+		{
+			if (no_key_pressed) {
+				ToggleDebugLed(kDebugAllLeds);
 			}
-			else
-			{
-				clear_debug_led(DEBUG_GREEN_LED);
+			no_key_pressed = 0;
+
+		} else if (game_sir_get_btn_value(kAIndex)) {
+			if (no_key_pressed) {
+				ToggleDebugLed(kDebugGreenLed);
 			}
-			if(game_sir_get_btn_value(B_INDEX))
-			{
-				set_debug_led(DEBUG_RED_LED);
+			no_key_pressed = 0;
+			
+		} else if (game_sir_get_btn_value(kBIndex)) {
+			if (no_key_pressed) {
+				ToggleDebugLed(kDebugRedLed);
 			}
-			else
-			{
-				clear_debug_led(DEBUG_RED_LED);
+			no_key_pressed = 0;
+			
+		} else if (game_sir_get_btn_value(kXIndex)) {
+			if (no_key_pressed) {
+				ToggleDebugLed(kDebugBlueLed);
 			}
-			if(game_sir_get_btn_value(X_INDEX))
-			{
-				set_debug_led(DEBUG_BLUE_LED);
+			no_key_pressed = 0;
+			
+		} else if (game_sir_get_btn_value(kYIndex)) {
+			if (no_key_pressed) {
+				ToggleDebugLed(kDebugOrangeLed);
 			}
-			else
-			{
-				clear_debug_led(DEBUG_BLUE_LED);
-			}
-			if(game_sir_get_btn_value(Y_INDEX))
-			{
-				set_debug_led(DEBUG_ORANGE_LED);
-			}
-			else
-			{
-				clear_debug_led(DEBUG_ORANGE_LED);
-			}
+			no_key_pressed = 0;
+			
+		} else {
+			no_key_pressed = 1;
+		}
+
+
+		// Control some motors
+		if (last_sys_millis != system_millis && system_millis % 100) {
+			last_sys_millis = system_millis;
+			MotorsSetPWM(kLeftMotor, game_sir_get_btn_value(kLeftStickUDIndex) * 10);
 		}
 	}
 }
