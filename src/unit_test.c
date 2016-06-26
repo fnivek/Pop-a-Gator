@@ -17,20 +17,20 @@ int8_t TestUsb(void)
 int8_t TestBluetooth(void)
 {
 	// Clear read
-	FlushBluetoothInput();
+	BluetoothFlushInput();
 
 	UsbWriteString("\n\r\n\rStart bluetooth test");
 	UsbWriteString("\n\rWriting AT to bluetooth chip\n\r");
 
 	char buf[] = "Bluetooth chip replied w/: ##";
 	// Write AT
-	WriteBluetooth('A');
-	WriteBluetooth('T');
+	BluetoothWrite('A');
+	BluetoothWrite('T');
 
 	// Read result
-	uint16_t data = ReadBluetooth(1000);
+	uint16_t data = BluetoothReadBlocking(1000);
 	buf[27] = data;
-	data = ReadBluetooth(1000);
+	data = BluetoothReadBlocking(1000);
 	buf[28] = data;
 	UsbWrite(buf, sizeof(buf));
 
