@@ -29,7 +29,7 @@ typedef struct SystickCallbackList
 
 
 // Functions
-void SysTickHandler(void);
+void sys_tick_handler(void);
 
 void SetupSystick(void);
 

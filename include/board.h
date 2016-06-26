@@ -12,4 +12,6 @@
 
 void SetupBoard(void);
 
+void BluetoothToGameSir(void);
+
 #endif

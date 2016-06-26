@@ -1,7 +1,8 @@
 #include "bluetooth.h"
 
-void SetupBluetooth(void)
-{
+void (*bluetooth_cb)(void) = 0;
+
+void SetupBluetooth(void) {
 	// Setup GPIO
 	rcc_periph_clock_enable(RCC_GPIOA);
 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2 | GPIO3);
@@ -16,25 +17,40 @@ void SetupBluetooth(void)
 	usart_set_parity(USART2, USART_PARITY_NONE);
 	usart_set_flow_control(USART2, USART_FLOWCONTROL_NONE);
 	usart_enable(USART2);
+	nvic_enable_irq(NVIC_USART2_IRQ);
+	usart_enable_rx_interrupt(USART2);
 
 	// Setup bluetooth module with AT commands
+	// This only needs to be done once
+	// TODO: Write script or mode that will automatically program an HC-05
 
 }
 
-uint16_t ReadBluetooth(uint32_t timeout)
-{
+uint16_t BluetoothReadBlocking(uint32_t timeout) {
 	uint32_t end = system_millis + timeout;
 	while(!(USART_SR(USART2) & USART_SR_RXNE) && end > system_millis);
 
 	return usart_recv(USART2);
 }
 
-void WriteBluetooth(uint16_t data)
-{
+uint16_t BluetoothRead(void) {
+	return usart_recv(USART2);
+}
+
+void BluetoothWrite(uint16_t data) {
 	usart_send_blocking(USART2, data);
 }
 
-void FlushBluetoothInput(void)
-{
+void BluetoothFlushInput(void) {
 	volatile uint16_t _ = usart_recv(USART2);
+}
+
+void BluetoothAddCb(void (*callback)(void)) {
+	bluetooth_cb = callback;
+}
+
+void usart2_isr(void) {
+	if (bluetooth_cb != 0) {
+		bluetooth_cb();
+	}
 }

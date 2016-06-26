@@ -16,8 +16,7 @@ FP           = -mfloat-abi=hard -mfpu=fpv4-sp-d16
 ############################################################
 # Linker Options
 ############################################################
-LDSCRIPT     = stm32f4-discovery.ld -Xlinker --defsym=SysTickHandler=sys_tick_handler
-
+LDSCRIPT     = stm32f4-discovery.ld
 
 ############################################################
 # Directories
