@@ -70,29 +70,30 @@ typedef struct
 	//const uint8_t toogle;
 	const uint8_t mask;					// Button mask for buttons that share a byte
 	uint8_t value;						// Current value of the button
+	uint8_t last_value;					// Previous value of the button
 } Button;
 
 // All the buttons on the game sir remote
 static Button remote[kNumBtns] =
 {
-	{/*kHomeBtnIndex,*/ 				kHomeBtnByte,				/*true,*/ 	0x08,		0	},
-	{/*kLeftStickLRIndex,*/ 			kLeftStickLRByte,			/*false,*/ 	0xFF,		128	},
-	{/*kLeftStickUDIndex,*/ 			kLeftStickUDByte,			/*false,*/ 	0xFF,		128	},
-	{/*kRightStickLRIndex,*/ 			kRightStickLRByte,			/*false,*/ 	0xFF,		128	},
-	{/*kRightStickUDIndex,*/ 			kRightStickUDByte,			/*false,*/ 	0xFF,		128	},
-	{/*kLeftTriggerIndex,*/ 			kLeftTriggerByte,			/*false,*/ 	0xFF,		0	},
-	{/*kRightTriggerIndex,*/ 			kRightTriggerByte,			/*false,*/ 	0xFF,		0	},
-	{/*kAIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x01,		0	},
-	{/*kBIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x02,		0	},
-	{/*kXIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x08,		0	},
-	{/*kYIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x10,		0	},
-	{/*kLeftBumperIndex,*/	 			kABXYBumpersByte,			/*true,*/ 	0x40,		0	},
-	{/*kRightBumperIndex,*/ 			kABXYBumpersByte,			/*true,*/ 	0x80,		0	},
-	{/*kSelectIndex,*/				 	kSelectStartSticksByte,		/*true,*/ 	0x04,		0	},
-	{/*kStartIndex,*/				 	kSelectStartSticksByte,		/*true,*/ 	0x08,		0	},
-	{/*kLeftStickIndex,*/			 	kSelectStartSticksByte,		/*true,*/ 	0x20,		0	},
-	{/*kRightStickIndex,*/			 	kSelectStartSticksByte,		/*true,*/ 	0x40,		0	},
-	{/*kDPadIndex,*/ 					kDPadByte,					/*false,*/ 	0x0F,		0	}
+	{/*kHomeBtnIndex,*/ 				kHomeBtnByte,				/*true,*/ 	0x08,		0,		0	},
+	{/*kLeftStickLRIndex,*/ 			kLeftStickLRByte,			/*false,*/ 	0xFF,		128,	128	},
+	{/*kLeftStickUDIndex,*/ 			kLeftStickUDByte,			/*false,*/ 	0xFF,		128,	128	},
+	{/*kRightStickLRIndex,*/ 			kRightStickLRByte,			/*false,*/ 	0xFF,		128,	128	},
+	{/*kRightStickUDIndex,*/ 			kRightStickUDByte,			/*false,*/ 	0xFF,		128,	128	},
+	{/*kLeftTriggerIndex,*/ 			kLeftTriggerByte,			/*false,*/ 	0xFF,		0,		0	},
+	{/*kRightTriggerIndex,*/ 			kRightTriggerByte,			/*false,*/ 	0xFF,		0,		0	},
+	{/*kAIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x01,		0,		0	},
+	{/*kBIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x02,		0,		0	},
+	{/*kXIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x08,		0,		0	},
+	{/*kYIndex,*/			 			kABXYBumpersByte,			/*true,*/ 	0x10,		0,		0	},
+	{/*kLeftBumperIndex,*/	 			kABXYBumpersByte,			/*true,*/ 	0x40,		0,		0	},
+	{/*kRightBumperIndex,*/ 			kABXYBumpersByte,			/*true,*/ 	0x80,		0,		0	},
+	{/*kSelectIndex,*/				 	kSelectStartSticksByte,		/*true,*/ 	0x04,		0,		0	},
+	{/*kStartIndex,*/				 	kSelectStartSticksByte,		/*true,*/ 	0x08,		0,		0	},
+	{/*kLeftStickIndex,*/			 	kSelectStartSticksByte,		/*true,*/ 	0x20,		0,		0	},
+	{/*kRightStickIndex,*/			 	kSelectStartSticksByte,		/*true,*/ 	0x40,		0,		0	},
+	{/*kDPadIndex,*/ 					kDPadByte,					/*false,*/ 	0x0F,		0,		0	}
 };
 
 // State indicator for message package decoding
@@ -113,5 +114,13 @@ void GameSirNewData(uint8_t new_data);
 
 // Function to get a button value
 uint8_t game_sir_get_btn_value(enum ControllerIndices button_index);
+
+// Function to get a button last value
+uint8_t game_sir_get_btn_last_value(enum ControllerIndices button_index);
+
+// Check if the state changed
+uint8_t game_sir_btn_changed(enum ControllerIndices button_index);
+uint8_t game_sir_btn_released(enum ControllerIndices button_index);
+uint8_t game_sir_btn_pressed(enum ControllerIndices button_index);
 
 #endif

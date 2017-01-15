@@ -22,7 +22,6 @@ void GameSirNewData(uint8_t new_data)
 	{
 		// Reset the byte counter
 		current_byte = 0;
-
 		if(new_data == kStdMsgIndicator)
 		{
 			current_msg_decode_state = kStdPkg;
@@ -43,6 +42,7 @@ void GameSirNewData(uint8_t new_data)
 	{
 		if(current_byte == remote[kHomeBtnIndex].byte_position)
 		{
+			remote[kHomeBtnIndex].last_value = remote[kHomeBtnIndex].value;
 			remote[kHomeBtnIndex].value = remote[kHomeBtnIndex].mask & new_data;
 		}
 		else if(current_byte >= (kHomeBtnMsgPkgSize - 1))
@@ -70,6 +70,7 @@ void GameSirNewData(uint8_t new_data)
 			if(current_byte == remote[btn_index].byte_position)
 			{
 				// Set the value of the button
+				remote[btn_index].last_value = remote[btn_index].value;
 				remote[btn_index].value = remote[btn_index].mask & new_data;
 			}			
 		}
@@ -77,11 +78,36 @@ void GameSirNewData(uint8_t new_data)
 		// Increment byte counter
 		++current_byte;
 	}
-
 }
 
 // Function to get a button value
 uint8_t game_sir_get_btn_value(enum ControllerIndices button_index)
 {
 	return remote[button_index].value;
+}
+
+// Function to get a button last value
+uint8_t game_sir_get_btn_last_value(enum ControllerIndices button_index) {
+	return remote[button_index].last_value;
+}
+
+// Check if the state changed
+uint8_t game_sir_btn_changed(enum ControllerIndices button_index) {
+	uint8_t result = !(remote[button_index].value == remote[button_index].last_value);
+	remote[button_index].last_value = remote[button_index].value;
+	return result;
+}
+
+// Check if btn pressed
+uint8_t game_sir_btn_pressed(enum ControllerIndices button_index) {
+	uint8_t result = !(remote[button_index].value == remote[button_index].last_value) && remote[button_index].value;
+	remote[button_index].last_value = remote[button_index].value;
+	return result;
+}
+
+// Check if btn released
+uint8_t game_sir_btn_released(enum ControllerIndices button_index) {
+	uint8_t result = !(remote[button_index].value == remote[button_index].last_value) && !remote[button_index].value;
+	remote[button_index].last_value = remote[button_index].value;
+	return result;
 }
