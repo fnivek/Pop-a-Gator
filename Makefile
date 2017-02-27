@@ -72,7 +72,7 @@ LD_FLAGS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 # Targets: Actions
 ############################################################
 .SUFFIXES: .c .eep .h .hex .o .elf .s .S
-.PHONY: all bin elf flash clean unit_test
+.PHONY: all bin elf flash clean unit_test libopencm3
 
 all: elf
 
