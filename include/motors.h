@@ -9,34 +9,35 @@
 
 // Structure that represents a motor
 typedef struct {
-	Pin in1_pin;
-	Pin in2_pin;
-	Pin pwm_pin;
-	uint32_t timer;
-	enum tim_oc_id	output_compare_channel;
+  Pin in1_pin;
+  Pin in2_pin;
+  Pin pwm_pin;
+  uint32_t timer;
+  enum tim_oc_id  output_compare_channel;
 } Motor;
 
 enum MotorIndex {
-	kLeftMotor,
-	kRightMotor,
+  kMotorOne,
+  kMotorTwo,
 
-	kNumMotors
+  kNumMotors
 };
 
 enum MotorDirection {
-	kForward,
-	kReverse,
-	kFreeSpinLow,
-	kFreeSpinHigh
+  kForward,
+  kReverse,
+  kFreeSpinLow,
+  kFreeSpinHigh
 };
 
 static const Motor motors[] = {
-	//in1,				in2,			pwm,			timmer,		output_compare_channel
-	{{GPIOC, GPIO10}, {GPIOA, GPIO15}, {GPIOA, GPIO8}, 	TIM1, 		TIM_OC1},		// Left motor
-	{{GPIOC, GPIO11}, {GPIOC, GPIO12}, {GPIOA, GPIO10}, TIM1, 		TIM_OC3}		// Right motor
+  // in1,            in2,             pwm,            timmer,   output_compare_channel
+  {{GPIOC, GPIO10}, {GPIOA, GPIO15}, {GPIOA, GPIO8},  TIM1,     TIM_OC1},   // Motor 1
+  {{GPIOC, GPIO11}, {GPIOC, GPIO12}, {GPIOA, GPIO10}, TIM1,     TIM_OC3}    // Motor 2
+  // TODO(Kevin French): Motor 3
 };
-// Max number of pwm ticks 
-//		168 MHZ / (2 * 20 KHz) 
+// Max number of pwm ticks
+//    168 MHZ / (2 * 20 KHz)
 static const uint32_t kMaxPwmTicks = 4200;
 
 void SetupMotors(void);
