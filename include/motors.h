@@ -19,6 +19,7 @@ typedef struct {
 enum MotorIndex {
   kMotorOne,
   kMotorTwo,
+  kMotorThree,
 
   kNumMotors
 };
@@ -33,8 +34,8 @@ enum MotorDirection {
 static const Motor motors[] = {
   // in1,            in2,             pwm,            timmer,   output_compare_channel
   {{GPIOC, GPIO10}, {GPIOA, GPIO15}, {GPIOA, GPIO8},  TIM1,     TIM_OC1},   // Motor 1
-  {{GPIOC, GPIO11}, {GPIOC, GPIO12}, {GPIOA, GPIO10}, TIM1,     TIM_OC3}    // Motor 2
-  // TODO(Kevin French): Motor 3
+  {{GPIOE, GPIO12}, {GPIOE, GPIO13}, {GPIOE, GPIO11}, TIM1,     TIM_OC2},   // Motor 2
+  {{GPIOC, GPIO11}, {GPIOC, GPIO12}, {GPIOA, GPIO10}, TIM1,     TIM_OC3}    // Motor 3
 };
 // Max number of pwm ticks
 //    168 MHZ / (2 * 20 KHz)

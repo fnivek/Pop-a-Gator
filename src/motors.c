@@ -5,6 +5,7 @@ void SetupMotors(void) {
 	rcc_periph_clock_enable(RCC_TIM1);
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_GPIOE);
 
 	// Timer
 	// Step 1 reset peripherial:
@@ -12,14 +13,17 @@ void SetupMotors(void) {
 	// Step 2 set mode
 	timer_set_mode(TIM1, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_CENTER_1,
                TIM_CR1_DIR_UP);
-	// Step 3 set output compare to PWM for both channels
+	// Step 3 set output compare to PWM for all channels
 	timer_set_oc_mode(TIM1, TIM_OC1, TIM_OCM_PWM1);
+	timer_set_oc_mode(TIM1, TIM_OC2, TIM_OCM_PWM1);
 	timer_set_oc_mode(TIM1, TIM_OC3, TIM_OCM_PWM1);
 	// Step 4 enable output compare for both channels
 	timer_enable_oc_output(TIM1, TIM_OC1);
+	timer_enable_oc_output(TIM1, TIM_OC2);
 	timer_enable_oc_output(TIM1, TIM_OC3);
 	// Step 5 set the compare value
 	timer_set_oc_value(TIM1, TIM_OC1, 0);
+	timer_set_oc_value(TIM1, TIM_OC2, 0);
 	timer_set_oc_value(TIM1, TIM_OC3, 0);
 	// Step 6 set the period
 	timer_set_period(TIM1, kMaxPwmTicks);
