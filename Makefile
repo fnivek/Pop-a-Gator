@@ -24,7 +24,7 @@ LDSCRIPT     = stm32f4-discovery.ld
 BUILD_DIR     = ./build
 OPENCM3_DIR   = ./libopencm3
 INCLUDE_DIR   = ./include ./libopencm3/include
-LIBRARIES_DIR = ./lib 
+LIBRARIES_DIR = ./lib
 SOURCE_DIR    = ./src
 LDSCRIPT_DIR  = ./ld
 
@@ -117,5 +117,5 @@ $(BUILD_DIR)/$(PROJECT)_unit_test.bin: $(BUILD_DIR)/$(PROJECT)_unit_test.elf
 	$(CC) $(AS_FLAGS) -c $< -o $@
 
 libopencm3:
-	git submodule update
+	# git submodule update
 	make -C libopencm3
