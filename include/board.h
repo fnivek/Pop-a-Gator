@@ -4,7 +4,7 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 
-#include "usb.h"
+// #include "usb.h"
 #include "systick_handler.h"
 #include "bluetooth.h"
 #include "debug_leds.h"
